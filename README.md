@@ -68,13 +68,37 @@ A simple demonstration of PayNow integration in a Next.js e-commerce application
 
 ## Testing
 
-Use PayNow's test credentials for development:
-- Integration ID: `INTEGRATION_ID`
-- Integration Key: `INTEGRATION_KEY`
+Use PayNow's test environment with these configurations:
 
-For mobile money testing, use:
-- EcoCash: `+263771234567`
-- OneMoney: `+263731234567`
+```ini
+# In .env.local
+NEXT_PUBLIC_PAYNOW_TEST_ECOCASH_PHONE=+263771234567
+NEXT_PUBLIC_PAYNOW_TEST_ONEMONEY_PHONE=+263731234567
+```
+
+Test using:
+- EcoCash: `$NEXT_PUBLIC_PAYNOW_TEST_ECOCASH_PHONE`
+- OneMoney: `$NEXT_PUBLIC_PAYNOW_TEST_ONEMONEY_PHONE`
+
+## Environment Variables
+
+```ini
+# PayNow Integration
+NEXT_PUBLIC_PAYNOW_INTEGRATION_ID=your_integration_id
+NEXT_PUBLIC_PAYNOW_INTEGRATION_KEY=your_integration_key
+NEXT_PUBLIC_PAYNOW_MERCHANT_EMAIL=registered@email.com
+
+# Test Mode Configuration
+NEXT_PUBLIC_PAYNOW_TEST_ECOCASH_PHONE=+263771234567
+NEXT_PUBLIC_PAYNOW_TEST_ONEMONEY_PHONE=+263731234567
+
+# Payment URLs
+PAYNOW_RESULT_URL=http://localhost:3000/api/payment/update
+PAYNOW_RETURN_URL=http://localhost:3000/payment/success
+```
+
+## Mobile Money Testing
+The system will automatically use test numbers from your environment variables when in development mode.
 
 ## Learn More
 
@@ -131,15 +155,6 @@ Core payment processing logic:
 - `pages/checkout.tsx`: Payment form UI
 - `pages/payment/success.tsx`: Success page
 - `pages/payment/failed.tsx`: Failed payment page
-
-## Environment Variables
-```ini
-NEXT_PUBLIC_PAYNOW_INTEGRATION_ID=your_integration_id
-NEXT_PUBLIC_PAYNOW_INTEGRATION_KEY=your_integration_key
-NEXT_PUBLIC_PAYNOW_MERCHANT_EMAIL=registered@email.com
-PAYNOW_RESULT_URL=http://localhost:3000/api/payment/update
-PAYNOW_RETURN_URL=http://localhost:3000/payment/success
-```
 
 ## Error Handling
 - Automatic retries for network errors

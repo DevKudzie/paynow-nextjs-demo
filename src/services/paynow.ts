@@ -34,9 +34,9 @@ export class PaynowService {
       process.env.NEXT_PUBLIC_PAYNOW_INTEGRATION_KEY
     );
     
-    // Configure callback URLs for payment lifecycle
-    this.paynow.resultUrl = "http://localhost:3000/api/payment/update";
-    this.paynow.returnUrl = "http://localhost:3000/payment/success";
+    // Use environment variables for URLs
+    this.paynow.resultUrl = process.env.PAYNOW_RESULT_URL;
+    this.paynow.returnUrl = process.env.PAYNOW_RETURN_URL;
   }
 
   /**
