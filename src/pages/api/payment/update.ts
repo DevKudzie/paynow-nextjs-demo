@@ -18,25 +18,25 @@ export default async function handler(
   }
 
   try {
-    const { pollUrl } = req.body;
+    const { pollUrl, phone, startTime } = req.body;
     
-    // Initialize service and check payment status
     const paynowService = new PaynowService();
-    const isPaid = await paynowService.checkPaymentStatus(pollUrl);
+    const paymentStatus = await paynowService.checkPaymentStatus(pollUrl, phone, startTime);
 
-    if (isPaid) {
-      // TODO: Update order status in database
-      // TODO: Send confirmation email
-      return res.status(200).json({ success: true });
-    } else {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Payment not confirmed' 
-      });
-    }
+    // Always return the full status
+    return res.status(200).json({
+      success: paymentStatus.paid,
+      status: paymentStatus.status,
+      message: paymentStatus.error
+    });
+
   } catch (error) {
     console.error('Payment update error:', error);
-    return res.status(500).json({ success: false });
+    return res.status(500).json({ 
+      success: false, 
+      status: 'failed',
+      message: error instanceof Error ? error.message : 'Payment check failed'
+    });
   }
 }
 

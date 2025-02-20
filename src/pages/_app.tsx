@@ -3,6 +3,7 @@ import Layout from '@/components/Layout'
 import { useThemeStore } from '@/utils/theme'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { Toaster } from 'react-hot-toast'
 
 export default function App({ Component, pageProps }: AppProps) {
   const { isDarkMode } = useThemeStore()
@@ -23,8 +24,11 @@ export default function App({ Component, pageProps }: AppProps) {
   }
 
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+      <Toaster position="top-right" />
+    </>
   )
 } 

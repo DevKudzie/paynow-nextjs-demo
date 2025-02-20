@@ -2,6 +2,66 @@
 
 A simple demonstration of PayNow integration in a Next.js e-commerce application.
 
+## Code Flow
+
+To understand the payment integration flow, review these files in order:
+
+```mermaid
+graph TD
+    A[types.ts] --> B[checkout.tsx]
+    B --> C[services/paynow.ts]
+    C --> D[api/payment/initiate.ts]
+    D --> E[api/payment/update.ts]
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#dfd,stroke:#333,stroke-width:2px
+```
+
+Key Files:
+1. `src/types/types.ts` - Core type definitions
+2. `src/pages/checkout.tsx` - Payment UI and form handling
+3. `src/services/paynow.ts` - PayNow integration logic
+4. `src/pages/api/payment/initiate.ts` - Payment initialization
+5. `src/pages/api/payment/update.ts` - Payment status updates
+
+## Mobile Money Express Checkout
+
+Mobile payments (EcoCash and OneMoney) are processed without redirecting to PayNow's website. Instead:
+1. User enters their mobile number
+2. Payment request is sent to their phone
+3. User approves payment on their device
+4. Status updates are shown in real-time
+
+## Test Mode
+
+When testing the integration, PayNow provides specific test phone numbers that simulate different scenarios:
+
+| Test Number | Scenario | Description | Status |
+|------------|----------|-------------|---------|
+| 0771111111 | Success | Payment succeeds after 5 seconds | ✅ Working |
+| 0774444444 | Insufficient | Immediate failure due to insufficient balance | ✅ Working |
+| 0772222222 | Delayed | Payment succeeds after 30 seconds | ⚠️ Unhandled |
+| 0773333333 | Cancelled | Payment fails after 30 seconds | ⚠️ Unhandled |
+
+**Important Notes:**
+- In test mode, only the merchant account email can complete transactions
+- The email used must match your merchant account email
+- Test mode is enabled by default for new integrations
+
+## Environment Variables
+
+```ini
+# PayNow Integration
+NEXT_PUBLIC_PAYNOW_INTEGRATION_ID=your_integration_id
+NEXT_PUBLIC_PAYNOW_INTEGRATION_KEY=your_integration_key
+NEXT_PUBLIC_PAYNOW_MERCHANT_EMAIL=your_merchant_email
+
+# Payment URLs
+PAYNOW_RESULT_URL=http://localhost:3000/api/payment/update
+PAYNOW_RETURN_URL=http://localhost:3000/payment/success
+```
+
 ## Payment Flow
 
 1. **Customer Checkout**
@@ -72,30 +132,14 @@ Use PayNow's test environment with these configurations:
 
 ```ini
 # In .env.local
-NEXT_PUBLIC_PAYNOW_TEST_ECOCASH_PHONE=+263771234567
-NEXT_PUBLIC_PAYNOW_TEST_ONEMONEY_PHONE=+263731234567
+NEXT_PUBLIC_PAYNOW_TEST_MODE=true
 ```
 
 Test using:
-- EcoCash: `$NEXT_PUBLIC_PAYNOW_TEST_ECOCASH_PHONE`
-- OneMoney: `$NEXT_PUBLIC_PAYNOW_TEST_ONEMONEY_PHONE`
+- Quick Success: `0771111111`
+- Insufficient Balance: `0774444444`
 
-## Environment Variables
-
-```ini
-# PayNow Integration
-NEXT_PUBLIC_PAYNOW_INTEGRATION_ID=your_integration_id
-NEXT_PUBLIC_PAYNOW_INTEGRATION_KEY=your_integration_key
-NEXT_PUBLIC_PAYNOW_MERCHANT_EMAIL=registered@email.com
-
-# Test Mode Configuration
-NEXT_PUBLIC_PAYNOW_TEST_ECOCASH_PHONE=+263771234567
-NEXT_PUBLIC_PAYNOW_TEST_ONEMONEY_PHONE=+263731234567
-
-# Payment URLs
-PAYNOW_RESULT_URL=http://localhost:3000/api/payment/update
-PAYNOW_RETURN_URL=http://localhost:3000/payment/success
-```
+Note: Delayed Success and User Cancelled scenarios are currently unhandled.
 
 ## Mobile Money Testing
 The system will automatically use test numbers from your environment variables when in development mode.
@@ -120,13 +164,17 @@ sequenceDiagram
     PayNowGateway-->>PaynowService: Payment response
     PaynowService-->>API: Payment details
     API-->>Client: Redirect URL/Poll URL
-    Client->>PayNowGateway: Redirect user
-    PayNowGateway->>API: POST /api/payment/update (webhook)
-    API->>PaynowService: checkPaymentStatus()
-    PaynowService->>PayNowGateway: Poll status
-    PayNowGateway-->>PaynowService: Payment status
-    PaynowService-->>API: Status confirmation
-    API-->>Client: Payment result
+    
+    alt Web Payment
+        Client->>PayNowGateway: Redirect user
+    else Mobile Money
+        Client->>API: Poll status
+        API->>PaynowService: checkPaymentStatus()
+        PaynowService->>PayNowGateway: Poll status
+        PayNowGateway-->>PaynowService: Payment status
+        PaynowService-->>API: Status update
+        API-->>Client: Payment result
+    end
 ```
 
 ## Key Components

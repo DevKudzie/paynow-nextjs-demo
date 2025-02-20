@@ -11,6 +11,7 @@
  */
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PaynowService } from '@/services/paynow';
+import { CartItem } from '@/types/types';  // Import the CartItem type
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,7 +30,7 @@ export default async function handler(
       email,
       paymentMethod,
       itemCount: items.length,
-      total: items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0)
+      total: items.reduce((sum: number, item: CartItem) => sum + (item.price * item.quantity), 0)
     });
 
     const paynowService = new PaynowService();
@@ -55,7 +56,7 @@ export default async function handler(
     if (!response.success) {
       return res.status(400).json({
         success: false,
-        message: 'Payment initiation failed'
+        message: response.error || 'Payment initiation failed'
       });
     }
 
