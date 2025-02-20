@@ -1,0 +1,36 @@
+{
+    "products": [
+      {
+        "id": 1,
+        "name": "Premium Wireless Headphones",
+        "price": 299.99,
+        "description": "High-quality wireless headphones with noise cancellation",
+        "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
+        "stock": 10
+      },
+      {
+        "id": 2,
+        "name": "Smart Fitness Watch",
+        "price": 199.99,
+        "description": "Track your fitness goals with this advanced smartwatch",
+        "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500",
+        "stock": 15
+      },
+      {
+        "id": 3,
+        "name": "Portable Power Bank",
+        "price": 49.99,
+        "description": "20000mAh high-capacity portable charger",
+        "image": "https://images.unsplash.com/photo-1614399113305-a127bb2ca893?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "stock": 20
+      },
+      {
+        "id": 4,
+        "name": "Wireless Gaming Mouse",
+        "price": 79.99,
+        "description": "RGB gaming mouse with programmable buttons",
+        "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500",
+        "stock": 8
+      }
+    ]
+  } 
